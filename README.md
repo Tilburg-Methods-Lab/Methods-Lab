@@ -6,11 +6,11 @@ The Lab brings together PhD researchers and colleagues who are interested in exp
 
 Sessions are held every two months and typically last 90 minutes. Depending on the topic, sessions can take different formats:
 
-# Method Journal Club — discussing a selected research paper with a particular focus on its methodological approach.
+Method Journal Club — discussing a selected research paper with a particular focus on its methodological approach.
 
-# Expert Talk — inviting experienced researchers, senior scholars, or PhD researchers to introduce a method and share their practical experience.
+Expert Talk — inviting experienced researchers, senior scholars, or PhD researchers to introduce a method and share their practical experience.
 
-# Hands-on Workshop  — working directly with methods, data, and code, including reproducing or adapting existing analyses.
+Hands-on Workshop  — working directly with methods, data, and code, including reproducing or adapting existing analyses.
 
 Some sessions may combine these formats. Materials, code, datasets (where sharing is permitted), and other resources for the sessions are made available through this repository.
 
