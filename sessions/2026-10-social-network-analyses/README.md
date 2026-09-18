@@ -14,12 +14,17 @@ Before the session
 4. Install the required R packages.
 
 During the session
+
 00–15 min    Introduction
+
 15–45 min    Discussion of the paper
+
 45–80 min    Replication and coding
+
 80–90 min    Discussion and wrap-up
 
 Materials
+
 • Reading 
 • Dataset
 • R code
