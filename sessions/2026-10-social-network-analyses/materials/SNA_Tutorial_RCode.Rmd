@@ -1,0 +1,562 @@
+---
+title: "Supplemental Code to Accompany Broda et al.'s Social Network Research Tutorial"
+author: "Michael Broda, Ph.D."
+date: "August 24, 2021"
+output:
+  word_document: default
+---
+
+# Installing packages:
+The following code will install the packages required for this analysis. The `repos` argument specifies a specific repository to use, and the `dependencies` argument specifies that package dependencies associated with the listed packages should also be installed.
+```{r}
+install.packages(c( "car", "igraph", "patchwork", "table1", "tidyverse"), repos = "http://cran.rstudio.com", dependencies = TRUE)
+```
+
+# We need to explicitly load in 1 package:
+When at all possible, we use the `package::function()` format to facilitate reproducible code in different environments. However, we need to load the `patchwork` package, which is not well suited to the `package::function()` structure. `patchwork` facilitates combining plots into combined elements. 
+```{r}
+library(patchwork)
+```
+
+The pipe operator, `%>%`, from the `magrittr` package is a useful tool for piping a series of commands into one series. Here, we just load the pipe function from `magrittr` and assign it to the symbol `%>%`.
+```{r}
+`%>%` <- magrittr::`%>%`
+```
+
+# Import the Dataset and Use `dplyr::glimpse` to Explore:
+```{r}
+langnet <- haven::read_dta("langnet.dta") %>%
+  dplyr::mutate(.,
+         risk_status_fac = forcats::as_factor(risk_status),
+         race_eth_fac = forcats::as_factor(race_eth),
+         gen_fac = forcats::as_factor(gen))
+
+dplyr::glimpse(langnet)
+```
+
+# Create a Student-Level Descriptive Table, by Lang. Risk Status
+```{r}
+table1::table1(~ age_yrs + race_eth_fac + gen_fac + celf_score  | risk_status_fac, data = langnet)
+```
+
+## Step 2: Visualizing Classroom Networks
+
+We can select classrooms from our edgelist and create some graphs.  First, we break our edgelist up into 21 groups, one for each classroom.
+
+### Classroom 0101
+
+```{r}
+friends0101 <- dplyr::filter(langnet, stringr::str_detect(student_id, "^101"))
+nodes0101 <- dplyr::select(friends0101, student_id, risk_status)
+ties0101 <- dplyr::select(friends0101, nom = student_id, bf1, bf2, bf3) %>%
+  tidyr::pivot_longer(-nom, values_to = "nom2") %>%
+  dplyr::filter(., nom2 != "NA") %>%
+  dplyr::select(., -name)
+
+g0101 <- igraph::graph_from_data_frame(ties0101, directed = TRUE, vertices = nodes0101)
+
+g0101
+
+# Subset vertices and edges
+igraph::V(g0101)
+igraph::E(g0101)
+
+# Count number of edges
+igraph::ecount(g0101)
+
+# Count number of vertices
+igraph::vcount(g0101)
+
+#Assign risk status as a vertex attribute
+igraph::V(g0101)$risk <- as.character(nodes0101$risk_status)
+
+class101 <- ggraph::ggraph(g0101, layout = "with_kk") +
+  ggraph::geom_edge_link(arrow = ggplot2::arrow(length = ggplot2::unit(3, 'mm'), type = "open", ends = "last"), 
+                   end_cap = ggraph::circle(3, 'mm')) +
+  ggraph::geom_node_point(ggplot2::aes(shape = risk, size = 2)) + ggplot2::theme_void() + ggplot2::theme(legend.position = "none") + ggplot2::ggtitle("Classroom 101")
+
+class101
+
+```
+
+### Classroom 0103
+
+```{r}
+friends0103 <- dplyr::filter(langnet, stringr::str_detect(student_id, "^103"))
+
+nodes0103 <- dplyr::select(friends0103, student_id, risk_status)
+
+ties0103 <- dplyr::select(friends0103, nom = student_id, bf1, bf2, bf3) %>%
+  tidyr::pivot_longer(-nom, values_to = "nom2") %>%
+  dplyr::filter(., nom2 != "NA") %>%
+  dplyr::select(., -name)
+
+g0103 <- igraph::graph_from_data_frame(ties0103, directed = TRUE, vertices = nodes0103)
+
+g0103
+
+# Subset vertices and edges
+igraph::V(g0103)
+igraph::E(g0103)
+
+# Count number of edges
+igraph::ecount(g0103)
+
+# Count number of vertices
+igraph::vcount(g0103)
+
+#Assign risk status as a vertex attribute
+igraph::V(g0103)$risk <- as.character(nodes0103$risk_status)
+
+class103 <- ggraph::ggraph(g0103, layout = "with_kk") +
+  ggraph::geom_edge_link(arrow = ggplot2::arrow(length = ggplot2::unit(3, 'mm'), type = "open", ends = "last"), 
+                   end_cap = ggraph::circle(3, 'mm')) +
+  ggraph::geom_node_point(ggplot2::aes(shape = risk, size = 2)) + ggplot2::theme_void() + ggplot2::theme(legend.position = "none") + ggplot2::ggtitle("Classroom 103")
+
+class103
+```
+
+### Classroom 0105
+
+```{r}
+friends0105 <- dplyr::filter(langnet, stringr::str_detect(student_id, "^105"))
+
+nodes0105 <- dplyr::select(friends0105, student_id, risk_status)
+
+ties0105 <- dplyr::select(friends0105, nom = student_id, bf1, bf2, bf3) %>%
+  tidyr::pivot_longer(-nom, values_to = "nom2") %>%
+  dplyr::filter(., nom2 != "NA") %>%
+  dplyr::select(., -name)
+
+g0105 <- igraph::graph_from_data_frame(ties0105, directed = TRUE, vertices = nodes0105)
+
+g0105
+
+# Subset vertices and edges
+igraph::V(g0105)
+igraph::E(g0105)
+
+# Count number of edges
+igraph::ecount(g0105)
+
+# Count number of vertices
+igraph::vcount(g0105)
+
+#Assign risk status as a vertex attribute
+igraph::V(g0105)$risk <- as.character(nodes0105$risk_status)
+
+ggraph::ggraph(g0105, layout = "with_kk") +
+  ggraph::geom_edge_link(arrow = ggplot2::arrow(length = ggplot2::unit(3, 'mm'), type = "open", ends = "last"), 
+                   end_cap = ggraph::circle(3, 'mm')) +
+  ggraph::geom_node_point(ggplot2::aes(shape = risk, size = 2)) + ggplot2::theme_void() + ggplot2::theme(legend.position = "none") + ggplot2::ggtitle("Classroom 105")
+
+```
+
+## Classroom 0106
+
+```{r}
+friends0106 <- dplyr::filter(langnet, stringr::str_detect(student_id, "^106"))
+
+nodes0106 <- dplyr::select(friends0106, student_id, risk_status)
+
+ties0106 <- dplyr::select(friends0106, nom = student_id, bf1, bf2, bf3) %>%
+  tidyr::pivot_longer(-nom, values_to = "nom2") %>%
+  dplyr::filter(., nom2 != "NA") %>%
+  dplyr::select(., -name)
+
+g0106 <- igraph::graph_from_data_frame(ties0106, directed = TRUE, vertices = nodes0106)
+
+g0106
+
+# Subset vertices and edges
+igraph::V(g0106)
+igraph::E(g0106)
+
+# Count number of edges
+igraph::ecount(g0106)
+
+# Count number of vertices
+igraph::vcount(g0106)
+
+#Assign risk status as a vertex attribute
+igraph::V(g0106)$risk <- as.character(nodes0106$risk_status)
+
+ggraph::ggraph(g0106, layout = "with_kk") +
+  ggraph::geom_edge_link(arrow = ggplot2::arrow(length = ggplot2::unit(3, 'mm'), type = "open", ends = "last"), 
+                   end_cap = ggraph::circle(3, 'mm')) +
+  ggraph::geom_node_point(ggplot2::aes(shape = risk, size = 2)) + ggplot2::theme_void() + ggplot2::theme(legend.position = "none") + ggplot2::ggtitle("Classroom 106")
+
+```
+
+## Classroom 0201
+
+```{r}
+friends0201 <- dplyr::filter(langnet, stringr::str_detect(student_id, "^201"))
+
+nodes0201 <- dplyr::select(friends0201, student_id, risk_status)
+
+ties0201 <- dplyr::select(friends0201, nom = student_id, bf1, bf2, bf3) %>%
+  tidyr::pivot_longer(-nom, values_to = "nom2") %>%
+  dplyr::filter(., nom2 != "NA") %>%
+  dplyr::select(., -name)
+
+g0201 <- igraph::graph_from_data_frame(ties0201, directed = TRUE, vertices = nodes0201)
+
+g0201
+
+# Subset vertices and edges
+igraph::V(g0201)
+igraph::E(g0201)
+
+# Count number of edges
+igraph::ecount(g0201)
+
+# Count number of vertices
+igraph::vcount(g0201)
+
+#Assign risk status as a vertex attribute
+igraph::V(g0201)$risk <- as.character(nodes0201$risk_status)
+
+class201 <- ggraph::ggraph(g0201, layout = "with_kk") +
+  ggraph::geom_edge_link(arrow = ggplot2::arrow(length = ggplot2::unit(3, 'mm'), type = "open", ends = "last"), 
+                   end_cap = ggraph::circle(3, 'mm')) +
+  ggraph::geom_node_point(ggplot2::aes(shape = risk, size = 2)) + ggplot2::theme_void() + ggplot2::theme(legend.position = "none") + ggplot2::ggtitle("Classroom 201")
+
+class201
+
+```
+
+## Classroom 0203
+
+```{r}
+friends0203 <- dplyr::filter(langnet, stringr::str_detect(student_id, "^203"))
+
+nodes0203 <- dplyr::select(friends0203, student_id, risk_status)
+
+ties0203 <- dplyr::select(friends0203, nom = student_id, bf1, bf2, bf3) %>%
+  tidyr::pivot_longer(-nom, values_to = "nom2") %>%
+  dplyr::filter(., nom2 != "NA") %>%
+  dplyr::select(., -name)
+
+g0203 <- igraph::graph_from_data_frame(ties0203, directed = TRUE, vertices = nodes0203)
+
+g0203
+
+# Subset vertices and edges
+igraph::V(g0203)
+igraph::E(g0203)
+
+# Count number of edges
+igraph::ecount(g0203)
+
+# Count number of vertices
+igraph::vcount(g0203)
+
+#Assign risk status as a vertex attribute
+igraph::V(g0203)$risk <- as.character(nodes0203$risk_status)
+
+ggraph::ggraph(g0203, layout = "with_kk") +
+  ggraph::geom_edge_link(arrow = ggplot2::arrow(length = ggplot2::unit(3, 'mm'), type = "open", ends = "last"), 
+                   end_cap = ggraph::circle(3, 'mm')) +
+  ggraph::geom_node_point(ggplot2::aes(shape = risk, size = 2)) + ggplot2::theme_void() + ggplot2::theme(legend.position = "none") + ggplot2::ggtitle("Classroom 203")
+
+```
+
+## Classroom 0204
+
+```{r}
+friends0204 <- dplyr::filter(langnet, stringr::str_detect(student_id, "^204"))
+
+nodes0204 <- dplyr::select(friends0204, student_id, risk_status)
+
+ties0204 <- dplyr::select(friends0204, nom = student_id, bf1, bf2, bf3) %>%
+  tidyr::pivot_longer(-nom, values_to = "nom2") %>%
+  dplyr::filter(., nom2 != "NA") %>%
+  dplyr::select(., -name)
+
+g0204 <- igraph::graph_from_data_frame(ties0204, directed = TRUE, vertices = nodes0204)
+
+g0204
+
+# Subset vertices and edges
+igraph::V(g0204)
+igraph::E(g0204)
+
+# Count number of edges
+igraph::ecount(g0204)
+
+# Count number of vertices
+igraph::vcount(g0204)
+
+#Assign risk status as a vertex attribute
+igraph::V(g0204)$risk <- as.character(nodes0204$risk_status)
+
+ggraph::ggraph(g0204, layout = "with_kk") +
+  ggraph::geom_edge_link(arrow = ggplot2::arrow(length = ggplot2::unit(3, 'mm'), type = "open", ends = "last"), 
+                   end_cap = ggraph::circle(3, 'mm')) +
+  ggraph::geom_node_point(ggplot2::aes(shape = risk, size = 2)) + ggplot2::theme_void() + ggplot2::theme(legend.position = "none") + ggplot2::ggtitle("Classroom 204")
+```
+
+## Classroom 0401
+
+```{r}
+friends0401 <- dplyr::filter(langnet, stringr::str_detect(student_id, "^401"))
+
+nodes0401 <- dplyr::select(friends0401, student_id, risk_status)
+
+ties0401 <- dplyr::select(friends0401, nom = student_id, bf1, bf2, bf3) %>%
+  tidyr::pivot_longer(-nom, values_to = "nom2") %>%
+  dplyr::filter(., nom2 != "NA") %>%
+  dplyr::select(., -name)
+  
+g0401 <- igraph::graph_from_data_frame(ties0401, directed = TRUE, vertices = nodes0401)
+
+g0401
+
+# Subset vertices and edges
+igraph::V(g0401)
+igraph::E(g0401)
+
+# Count number of edges
+igraph::ecount(g0401)
+
+# Count number of vertices
+igraph::vcount(g0401)
+
+#Assign risk status as a vertex attribute
+igraph::V(g0401)$risk <- as.character(nodes0401$risk_status)
+
+class401 <- ggraph::ggraph(g0401, layout = "with_kk") +
+  ggraph::geom_edge_link(arrow = ggplot2::arrow(length = ggplot2::unit(3, 'mm'), type = "open", ends = "last"), 
+                   end_cap = ggraph::circle(3, 'mm')) +
+  ggraph::geom_node_point(ggplot2::aes(shape = risk, size = 2)) + ggplot2::theme_void() + ggplot2::theme(legend.position = "none") + ggplot2::ggtitle("Classroom 401")
+
+class401
+
+```
+
+## Classroom 0403
+```{r}
+friends0403 <- dplyr::filter(langnet, stringr::str_detect(student_id, "^403"))
+
+nodes0403 <- dplyr::select(friends0403, student_id, risk_status)
+
+ties0403 <- dplyr::select(friends0403, nom = student_id, bf1, bf2, bf3) %>%
+  tidyr::pivot_longer(-nom, values_to = "nom2") %>%
+  dplyr::filter(., nom2 != "NA") %>%
+  dplyr::select(., -name)
+
+g0403 <- igraph::graph_from_data_frame(ties0403, directed = TRUE, vertices = nodes0403)
+
+g0403
+
+# Subset vertices and edges
+igraph::V(g0403)
+igraph::E(g0403)
+
+# Count number of edges
+igraph::ecount(g0403)
+
+# Count number of vertices
+igraph::vcount(g0403)
+
+#Assign risk status as a vertex attribute
+igraph::V(g0403)$risk <- as.character(nodes0403$risk_status)
+
+ggraph::ggraph(g0403, layout = "with_kk") +
+  ggraph::geom_edge_link(arrow = ggplot2::arrow(length = ggplot2::unit(3, 'mm'), type = "open", ends = "last"), 
+                   end_cap = ggraph::circle(3, 'mm')) +
+  ggraph::geom_node_point(ggplot2::aes(shape = risk, size = 2)) + ggplot2::theme_void() + ggplot2::theme(legend.position = "none") + ggplot2::ggtitle("Classroom 403")
+
+```
+
+## Create a Combined Plot of 4 Classrooms...
+```{r}
+
+p <- (class101|class103)/
+  (class201|class401) + plot_annotation(
+    title = 'Classroom Friendship Networks',
+  subtitle = 'by Student Risk Status',
+  caption = 'Students at risk of language disorder are denoted with triangles. Student NOT at risk are denoted with a circles. Arrows indicate the direction of each friendship nomination.')
+
+p
+
+```
+
+## Calculating Network-Level Descriptives for Each Classroom
+```{r}
+classes <- list(g0101, g0103, g0105, g0106, g0201, g0203, g0204, g0401, g0403)
+
+size <- classes %>% 
+  purrr::map(igraph::vcount)
+
+n_edges <- classes %>% 
+  purrr::map(igraph::ecount)
+
+density <- classes %>% 
+  purrr::map(igraph::edge_density)
+
+recip <- classes %>% 
+  purrr::map(igraph::reciprocity)
+
+distance = classes %>% 
+  purrr::map(igraph::mean_distance)
+
+net_summary <- cbind(c("Class 101", "Class 103", "Class 105", "Class 106", "Class 201", "Class 203", "Class 204", "Class 401", "Class 403"),
+                     as.matrix(unlist(size), ncol = 1),
+                     as.matrix(unlist(n_edges), ncol = 1),
+                     as.matrix(unlist(density), ncol = 1),
+                     as.matrix(unlist(recip), ncol = 1),
+                     as.matrix(unlist(distance), ncol = 1)) %>%
+  dplyr::as_tibble(.name_repair = ~ c("class", "size", "edges", "density", "recip", "distance"))
+
+```
+
+## Calculating Degree Centrality Measures for Each Classroom Network
+Important Note: Nodes without ties are left in here.  To get the centrality to calculate, I adjusted the alpha from 1 to .999.
+
+```{r}
+cent_0101 <- igraph::degree(g0101, normalized = TRUE) 
+central0101 <- dplyr::tibble(student_id = names(cent_0101), cent = cent_0101)
+
+cent_0103 <-igraph::degree(g0103, normalized = TRUE)
+central0103 <- dplyr::tibble(student_id = names(cent_0103), cent = cent_0103)
+
+cent_0105 <-igraph::degree(g0105, normalized = TRUE)
+central0105 <- dplyr::tibble(student_id = names(cent_0105), cent = cent_0105)
+
+cent_0106 <-igraph::degree(g0106, normalized = TRUE)
+central0106 <- dplyr::tibble(student_id = names(cent_0106), cent = cent_0106)
+
+cent_0201 <-igraph::degree(g0201, normalized = TRUE)
+central0201 <- dplyr::tibble(student_id = names(cent_0201), cent = cent_0201)
+
+cent_0203 <-igraph::degree(g0203, normalized = TRUE)
+central0203 <- dplyr::tibble(student_id = names(cent_0203), cent = cent_0203)
+
+cent_0204 <-igraph::degree(g0204, normalized = TRUE)
+central0204 <- dplyr::tibble(student_id = names(cent_0204), cent = cent_0204)
+
+cent_0401 <-igraph::degree(g0401, normalized = TRUE)
+central0401 <- dplyr::tibble(student_id = names(cent_0401), cent = cent_0401)
+
+cent_0403 <-igraph::degree(g0403, normalized = TRUE)
+central0403 <- dplyr::tibble(student_id = names(cent_0403), cent = cent_0403)
+
+cent <- dplyr::bind_rows(central0101, central0103, central0105, central0106, 
+                  central0201, central0203, central0204, central0401, central0403)
+
+```
+
+## Calculating Closeness Centrality Measures for Each Classroom Network
+
+```{r}
+cent_0101b <- igraph::closeness(g0101, normalized = TRUE) 
+central0101b <- dplyr::tibble(student_id = names(cent_0101b), centb = cent_0101b)
+
+cent_0103b <- igraph::closeness(g0103, normalized = TRUE)
+central0103b <- dplyr::tibble(student_id = names(cent_0103b), centb = cent_0103b)
+
+cent_0105b <- igraph::closeness(g0105, normalized = TRUE)
+central0105b <- dplyr::tibble(student_id = names(cent_0105b), centb = cent_0105b)
+
+cent_0106b <- igraph::closeness(g0106, normalized = TRUE)
+central0106b <- dplyr::tibble(student_id = names(cent_0106b), centb = cent_0106b)
+
+cent_0201b <- igraph::closeness(g0201, normalized = TRUE)
+central0201b <- dplyr::tibble(student_id = names(cent_0201b), centb = cent_0201b)
+
+cent_0203b <- igraph::closeness(g0203, normalized = TRUE)
+central0203b <- dplyr::tibble(student_id = names(cent_0203b), centb = cent_0203b)
+
+cent_0204b <- igraph::closeness(g0204, normalized = TRUE)
+central0204b <- dplyr::tibble(student_id = names(cent_0204b), centb = cent_0204b)
+
+cent_0401b <- igraph::closeness(g0401, normalized = TRUE)
+central0401b <- dplyr::tibble(student_id = names(cent_0401b), centb = cent_0401b)
+
+cent_0403b <- igraph::closeness(g0403, normalized = TRUE)
+central0403b <- dplyr::tibble(student_id = names(cent_0403b), centb = cent_0403b)
+
+centb <- dplyr::bind_rows(central0101b, central0103b, central0105b, central0106b, 
+                  central0201b, central0203b, central0204b, central0401b, central0403b)
+```
+
+# Merge centrality scores with the rest of the dataset
+
+```{r}
+net_final <- dplyr::full_join(cent, langnet, by = "student_id") %>% 
+  dplyr::full_join(., centb, by = "student_id")
+
+dplyr::glimpse(net_final)
+```
+
+## Create a Combined Plot Degree and Closeness Centrality Histograms...
+```{r}
+close <- ggplot2::ggplot(net_final, ggplot2::aes(risk_status_fac, centb)) + 
+  ggplot2::geom_boxplot() + ggplot2::labs(x = "Language Risk Status (1 = At Risk)",
+                        y = "Closeness Centrality Score",
+                        title = "Closeness Centrality")
+close 
+
+degree <- ggplot2::ggplot(net_final, ggplot2::aes(risk_status_fac, cent)) + 
+  ggplot2::geom_boxplot() + ggplot2::labs(x = "Language Risk Status (1 = At Risk)",
+                        y = "Degree Centrality Score",
+                        title = "Degree Centrality")
+degree 
+
+p2 <- degree + close
+
+p2
+```
+
+Now, we can do some modeling!  We have one complete dataset, with centrality and student_characteristics.
+
+# Regression Models for Degree Centrality
+## Binary IV of Interest (Risk_Status)
+```{r}
+
+model.1 <- lm(cent ~ risk_status_fac + gen_fac + age_yrs + race_eth_fac, data = na.omit(net_final))
+summary(model.1)
+```
+
+## Continuous IV of Interest (CELF_Score)
+```{r}
+
+model.2 <- lm(cent ~ celf_score + gen_fac + age_yrs + race_eth_fac, data = na.omit(net_final))
+summary(model.2)
+
+```
+
+# Multilevel Models for Closeness Centrality
+## Binary IV of Interest (Risk_Status)
+```{r}
+
+model.1b <- lm(centb ~ risk_status_fac + gen_fac + age_yrs + race_eth_fac, data = net_final)
+summary(model.1b)
+```
+
+## Continuous IV of Interest (CELF_Score)
+```{r}
+
+model.2b <- lm(centb ~ celf_score + gen_fac + age_yrs + race_eth_fac, data = net_final)
+summary(model.2b)
+
+```
+
+# Using Bootstrapping to Remove Dependency in Positional Network Measures
+## Binary IV of Interest (Risk_Status)
+```{r}
+set.seed(23284) # for reproducibility
+boot.model.1 <- car::Boot(model.1, R = 1000)
+summary(boot.model.1)
+car::Confint(boot.model.1, level = .95, type = "perc")
+```
+
+## Continuous IV of Interest (CELF_Score)
+```{r}
+set.seed(23284) # for reproducibility
+boot.model.2 <- car::Boot(model.2, R = 1000)
+summary(boot.model.2)
+car::Confint(boot.model.2, level = .95, type = "perc")
+```
